@@ -1,9 +1,8 @@
-import "./globals.css";
+"use client";
 
-export const metadata = {
-  title: "Recipe App",
-  description: "Recipe Management Application",
-};
+import "./globals.css";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 
 export default function RootLayout({
   children,
@@ -13,9 +12,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen bg-background text-foreground">
-          {children}
-        </div>
+        <Provider store={store}>
+          <div className="min-h-screen">{children}</div>
+        </Provider>
       </body>
     </html>
   );
