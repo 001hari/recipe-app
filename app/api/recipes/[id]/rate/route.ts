@@ -7,18 +7,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const body: RateRecipeInput = await req.json();
-  console.log('hello')
   if (body.rating < 1 || body.rating > 5) {
     return NextResponse.json(
       { error: "Rating must be 1–5" },
       { status: 400 }
     );
   }
-  console.log((await params).id)
   const {id} = await params
   const recipes = getRecipes();
   const index = recipes.findIndex((r) => r.id === id);
-  console.log(recipes);
   if (index === -1) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

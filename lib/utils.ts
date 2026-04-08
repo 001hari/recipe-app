@@ -1,3 +1,11 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+
 export function generateId() {
   return crypto.randomUUID();
 }
@@ -11,7 +19,7 @@ export function slugify(text: string) {
 }
 
 export function generateUniqueSlug(title: string, existingSlugs: string[]) {
-  const base = slugify(title);
+  let base = slugify(title);
   let slug = base;
   let counter = 1;
 
