@@ -28,11 +28,8 @@ export default function LoginPage() {
 
       if (res.ok) {
         window.dispatchEvent(new Event("chef-auth"));
-        // Force refresh the router state to recognize the new cookie
-        router.refresh();
-        setTimeout(() => {
-          router.push("/manage");
-        }, 100);
+        // Use hard redirect to ensure the new cookie is fully recognized by the server
+        window.location.href = "/manage";
       } else {
         const data = await res.json();
         setError(data.error || "Login failed");
