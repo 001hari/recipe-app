@@ -5,9 +5,10 @@ import RecipeCard from "@/components/RecipeCard";
 import { Button } from "@/components/ui/button";
 import { ChefHat, Utensils, Star, ArrowRight, Sparkles, TrendingUp, Search } from "lucide-react";
 import Image from "next/image";
+import { getBaseUrl } from "@/lib/utils";
 
 async function getFeatured(): Promise<Recipe[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = getBaseUrl();
   const res = await fetch(`${baseUrl}/api/recipes?published=true`, {
     next: { revalidate: 60 },
   });

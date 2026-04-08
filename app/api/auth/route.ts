@@ -2,8 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const ADMIN_EMAIL = "admin@recipe.app";
-const ADMIN_PASS = "admin123";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASS = process.env.ADMIN_PASS;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

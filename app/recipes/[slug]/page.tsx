@@ -2,13 +2,14 @@
 import { notFound } from 'next/navigation';
 import { Recipe } from '@/types/recipe';
 import RecipeDetailClient from '@/components/RecipeDetailClient';
+import { getBaseUrl } from '@/lib/utils';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 async function getRecipe(slug: string): Promise<Recipe | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = getBaseUrl();
   const res = await fetch(`${baseUrl}/api/recipes?slug=${slug}&published=true`, {
     cache: 'no-store',
   });

@@ -68,7 +68,7 @@ export default function LoginPage() {
                <div className="relative">
                  <Input 
                    type="email" 
-                   placeholder="admin@recipe.app" 
+                   placeholder="admin@recipe.com" 
                    value={email}
                    onChange={(e) => setEmail(e.target.value)}
                    className="h-12 pl-12 rounded-2xl bg-muted/20 border-0 focus:ring-2 focus:ring-primary/20 transition-all"

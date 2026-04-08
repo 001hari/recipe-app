@@ -1,10 +1,10 @@
 
 import { Recipe } from '@/types/recipe';
 import RecipesBrowseClient from '@/components/RecipesBrowseClient';
+import { getBaseUrl } from '@/lib/utils';
 
 async function getRecipes(): Promise<Recipe[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  // Published=true for public browse as per Point 13
+  const baseUrl = getBaseUrl();
   const res = await fetch(`${baseUrl}/api/recipes?published=true`, {
     cache: 'no-store',
   });
