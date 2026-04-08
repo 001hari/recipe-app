@@ -3,6 +3,7 @@
 import "./globals.css";
 import { Provider } from "react-redux";
 import { store } from "@/store";
+import { CookingProvider } from "@/context/CookingContext";
 
 export default function RootLayout({
   children,
@@ -13,7 +14,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Provider store={store}>
-          <div className="min-h-screen">{children}</div>
+          <CookingProvider>
+            <div className="min-h-screen">{children}</div>
+          </CookingProvider>
         </Provider>
       </body>
     </html>
