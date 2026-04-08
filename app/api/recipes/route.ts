@@ -17,8 +17,13 @@ export async function GET(req: NextRequest) {
 	const search = searchParams.get('search');
 	const maxCookTime = searchParams.get('maxCookTime');
 	const published = searchParams.get('published');
+	const slug = searchParams.get('slug');
 
 	let result = [...recipes];
+
+	if (slug) {
+		result = result.filter((r) => r.slug === slug);
+	}
 
 	if (category) {
 		result = result.filter((r) => r.category === category);
@@ -85,6 +90,7 @@ export async function POST(req: NextRequest) {
 	const newRecipe: Recipe = {
 		...body,
 		id: generateId(),
+        published: true,
 		slug,
 		rating: 0,
 		ratingCount: 0,

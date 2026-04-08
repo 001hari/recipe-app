@@ -128,3 +128,13 @@
     @apply font-sans;
   }
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer-animate {
+  animation: shimmer 1.5s infinite;
+}

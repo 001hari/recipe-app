@@ -1,31 +1,24 @@
-"use client";
 
-import { useEffect } from "react";
-import { fetchRecipes } from "@/store/recipeSlice";
-import { useAppDispatch } from "@/hooks/useRedux";
-import { useFilteredRecipes } from "@/hooks/useFilteredRecipes";
-import RecipeCard from "@/components/RecipeCard";
-import RecipeFiltersBar from "@/components/RecipeFiltersBar";
+import { Recipe } from '@/types/recipe';
+import RecipesBrowseClient from '@/components/RecipesBrowseClient';
 
-export default function RecipesPage() {
-  const dispatch = useAppDispatch();
-  const { filteredRecipes } = useFilteredRecipes();
+async function getRecipes(): Promise<Recipe[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  // Published=true for public browse as per Point 13
+  const res = await fetch(`${baseUrl}/api/recipes?published=true`, {
+    cache: 'no-store',
+  });
 
-  useEffect(() => {
-    dispatch(fetchRecipes());
-  }, [dispatch]);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export default async function RecipesPage() {
+  const initialRecipes = await getRecipes();
 
   return (
-    <div>
-      <h1 className="text-xl font-bold">Browse Recipes</h1>
-
-      <RecipeFiltersBar />
-
-      <div className="grid grid-cols-3 gap-4 mt-4">
-        {filteredRecipes.map((r) => (
-          <RecipeCard key={r.id} recipe={r} variant="public" />
-        ))}
-      </div>
+    <div className="max-w-7xl mx-auto py-12 px-6">
+      <RecipesBrowseClient initialRecipes={initialRecipes} />
     </div>
   );
 }

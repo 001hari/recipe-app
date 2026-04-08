@@ -82,6 +82,12 @@ const recipeSlice = createSlice({
   name: "recipes",
   initialState,
   reducers: {
+    setRecipes(state, action) {
+      state.recipes = action.payload;
+    },
+    addRecipe(state, action) {
+      state.recipes.unshift(action.payload);
+    },
     setFilters(state, action) {
       state.filters = action.payload;
     },
@@ -139,7 +145,7 @@ const recipeSlice = createSlice({
   },
 });
 
-export const { setFilters, clearFilters, setSelectedRecipe } =
+export const { setRecipes, addRecipe, setFilters, clearFilters, setSelectedRecipe } =
   recipeSlice.actions;
 
 export default recipeSlice.reducer;

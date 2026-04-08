@@ -1,40 +1,34 @@
-"use client";
 
-import { useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import { fetchRecipes } from "@/store/recipeSlice";
-import IngredientRow from "@/components/IngredientRow";
-import StepCard from "@/components/StepCard";
+import { notFound } from 'next/navigation';
+import { Recipe } from '@/types/recipe';
+import RecipeDetailClient from '@/components/RecipeDetailClient';
 
-export default function RecipeDetailPage() {
-  const { slug } = useParams();
-  const dispatch = useAppDispatch();
-  const { recipes } = useAppSelector((s) => s.recipes);
+interface Props {
+  params: Promise<{ slug: string }>;
+}
 
-  useEffect(() => {
-    dispatch(fetchRecipes());
-  }, [dispatch]);
+async function getRecipe(slug: string): Promise<Recipe | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/recipes?slug=${slug}&published=true`, {
+    cache: 'no-store',
+  });
 
-  const recipe = recipes.find((r) => r.slug === slug);
+  if (!res.ok) return null;
+  const recipes = await res.json();
+  return recipes[0] || null;
+}
 
-  if (!recipe) return <p>Not Found</p>;
+export default async function RecipePage({ params }: Props) {
+  const { slug } = await params;
+  const recipe = await getRecipe(slug);
+
+  if (!recipe) {
+    notFound();
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">{recipe.title}</h1>
-
-      <p>{recipe.description}</p>
-
-      <h2 className="mt-4 font-semibold">Ingredients</h2>
-      {recipe.ingredients.map((ing) => (
-        <IngredientRow key={ing.id} ingredient={ing} />
-      ))}
-
-      <h2 className="mt-4 font-semibold">Steps</h2>
-      {recipe.steps.map((step) => (
-        <StepCard key={step.stepNumber} step={step} />
-      ))}
+    <div className="max-w-5xl mx-auto py-8 px-4">
+      <RecipeDetailClient recipe={recipe} />
     </div>
   );
 }

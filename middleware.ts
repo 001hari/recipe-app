@@ -1,22 +1,28 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("chef_token");
-
-  if (!token && request.nextUrl.pathname.startsWith("/manage")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.searchParams.set("error", "login_required");
-
-    return NextResponse.redirect(url);
+  const session = request.cookies.get('chef_session');
+  
+  // Protect all /manage routes
+  if (request.nextUrl.pathname.startsWith('/manage')) {
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
   }
 
-  console.log("Middleware:", request.nextUrl.pathname);
+  // Protect mutation API routes
+  if (request.nextUrl.pathname.startsWith('/api/recipes')) {
+    const isMutation = ['POST', 'PUT', 'DELETE'].includes(request.method);
+    if (isMutation && !session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/manage/:path*"],
+  matcher: ['/manage/:path*', '/api/recipes/:path*'],
 };
