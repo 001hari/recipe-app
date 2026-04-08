@@ -1,31 +1,39 @@
 "use client";
 
 import { RecipeStep } from "@/types/recipe";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-interface Props {
-  step: RecipeStep;
-}
+let activeTimer: NodeJS.Timeout | null = null;
 
-export default function StepCard({ step }: Props) {
-  const [time, setTime] = useState(step.durationMinutes || 0);
-  const [running, setRunning] = useState(false);
+export default function StepCard({ step }: { step: RecipeStep }) {
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!running) return;
+  const startTimer = () => {
+    if (!step.durationMinutes) return;
 
-    const interval = setInterval(() => {
-      setTime((t) => {
-        if (t <= 0) {
-          clearInterval(interval);
-          return 0;
-        }
-        return t - 1;
-      });
-    }, 60000);
+    if (activeTimer) clearInterval(activeTimer);
 
-    return () => clearInterval(interval);
-  }, [running]);
+    let totalSeconds = step.durationMinutes * 60;
+    setTimeLeft(totalSeconds);
+
+    activeTimer = setInterval(() => {
+      totalSeconds--;
+
+      if (totalSeconds <= 0) {
+        clearInterval(activeTimer!);
+        setTimeLeft(0);
+        return;
+      }
+
+      setTimeLeft(totalSeconds);
+    }, 1000);
+  };
+
+  const formatTime = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="border p-3 mt-2">
@@ -34,15 +42,16 @@ export default function StepCard({ step }: Props) {
       </p>
 
       {step.durationMinutes && (
-        <button
-          className="border px-2 mt-2"
-          onClick={() => setRunning(true)}
-        >
+        <button onClick={startTimer} className="border px-2 mt-2">
           Start Timer ({step.durationMinutes} min)
         </button>
       )}
 
-      {running && <p>Time left: {time} min</p>}
+      {timeLeft !== null && (
+        <p className={timeLeft < 10 ? "text-red-500" : ""}>
+          {timeLeft === 0 ? "Time's Up!" : formatTime(timeLeft)}
+        </p>
+      )}
     </div>
   );
 }
